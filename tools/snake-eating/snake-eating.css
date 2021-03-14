@@ -1,0 +1,176 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-color: black;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.star {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0.2;
+    border: 2px solid transparent;
+    border-bottom: 4px solid #fff;
+    animation: flash 2s infinite linear;
+}
+
+.star::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 4px;
+    border: 2px solid transparent;
+    border-top: 4px solid #fff;
+}
+
+@keyframes flash {
+    20% {
+        opacity: 0.2;
+    }
+
+    40% {
+        opacity: 0.5;
+    }
+
+    60% {
+        opacity: 1;
+    }
+
+    80% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 0.2;
+    }
+}
+
+#musicBox{
+    position: absolute;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    left: -13%;
+    bottom: 35%;
+}
+#musicBox:hover{
+    animation: rotating 0.5s infinite linear;
+}
+
+@keyframes rotating{
+    0%,
+    100% {
+      transform: rotateZ(0);
+    }
+  
+    33% {
+      transform: rotateZ(15deg);
+    }
+  
+    66% {
+      transform: rotateZ(-15deg);
+    } 
+}
+
+#musicBox audio{
+    display: none;
+}
+
+#container{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+td {
+    width: 1em;
+    height: 1em;
+}
+
+.food {
+    background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
+    border-radius: 50%;
+}
+
+.border {
+    background-color: pink;
+}
+
+#startBtn {
+    position: absolute;
+    background-color: skyblue;
+    outline: none;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    left: -15%;
+    bottom: 25%;
+}
+
+#stopBtn {
+    position: absolute;
+    background-color: skyblue;
+    outline: none;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    left: -15%;
+    bottom: 15%;
+}
+
+#contiBtn {
+    position: absolute;
+    background-color: skyblue;
+    outline: none;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    left: -15%;
+    bottom: 5%;
+}
+
+button:hover {
+    cursor: pointer;
+    animation: jelly 0.5s infinite linear;
+}
+
+@keyframes jelly {
+    0%,
+    100% {
+      transform: scale(1, 1);
+    }
+  
+    33% {
+      transform: scale(0.9, 1.1);
+    }
+  
+    66% {
+      transform: scale(1.1, 0.9);
+    }
+}
+
+#sorce {
+    position: absolute;
+    top: 80px;
+    left: 100px;
+    transform: translateX(-50%);
+    color: white;
+}
+
+#vx {
+    font-size: 25px;
+    color: white;
+    position: absolute;
+    top: 285px;
+    right: 60px;
+    display: none;
+}
+
+

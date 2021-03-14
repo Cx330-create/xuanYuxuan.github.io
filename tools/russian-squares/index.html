@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russian squares</title>
+    <script src="./Rusqua.js" type="text/javascript"></script>
+    <link rel="shortcut icon" href="./Rusqua.ico" />
+    <link rel="stylesheet" href="./Rusqua.css">
+</head>
+
+<body>
+        <div id="box" class="box">
+            <div id="musicBox" class="musicBox">
+                <audio autoplay="autopaly" loop="loop">
+                    <source src="http://music.163.com/song/media/outer/url?id=448226072.mp3" type="audio/mp3" />
+                </audio>
+            </div>
+            <table id="gameBorder"></table>
+            <div class="tip_box">
+                <p style="color: rgb(255, 255, 255);">下一个方块的形状是：</p>
+                <table id="tip" class="tip"></table>
+            </div>
+            <button id="begin" class="begin btn-right-bottom-shadow">开始游戏</button>
+            <button id="stop-continue" class="stop-continue btn-right-bottom-shadow">暂停继续</button>
+        </div>
+</body>
+</html>
