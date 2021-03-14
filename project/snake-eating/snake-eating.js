@@ -1,6 +1,6 @@
-var keyNum = 38, wipeNum = 0, judNum = 0, interval = 300, myInterval = 300;
-var snakeCoor = new Array(), rains = new Array();
-var snake = new Object();
+var keyNum = 38, accle = 38, wipeNum = 0, judNum = 0, interval = 300, myInterval = 300, borderNum = 30;
+var snakeCoor = [], rains = [];
+var snake = {};
 var timer, context, score, pre_interval, run = false, flag = false;
 var starCount = 300, rainCount = 20;
 window.onload = function () {
@@ -12,10 +12,10 @@ window.onload = function () {
     var vx = document.querySelector("#vx");
     var musicBox = document.getElementById("musicBox");
     var music = document.getElementsByTagName("audio")[0];
-    for (var i = 1; i <= 40; i++) {
+    for (var i = 1; i <= borderNum; i++) {
         tr = document.createElement("tr");
         table.appendChild(tr);
-        for (var j = 1; j <= 40; j++) {
+        for (var j = 1; j <= borderNum; j++) {
             td = document.createElement("td");
             td.className = "grid";
             tr.appendChild(td);
@@ -41,12 +41,14 @@ window.onload = function () {
         keyNum = 38;
         score = 0;
         sorceReco.innerText = "你的得分是: " + score;
-        food();
-        if (Boolean(pre_foodCoor)) {
-            if (hasClass(grid[pre_foodCoor], "food"))
-                removeClass(grid[pre_foodCoor], "food");
+        for(var i = 0;i < borderNum * borderNum; i++){
+            if(hasClass(grid[i], "food")){
+                removeClass(grid[i], "food");
+                break;
+            }
         }
-        if (Boolean(snakeCoor[0])) {
+        foodGen();
+        if (snakeCoor[0]) {
             for (var i = 0; i < snake.len; i++) {
                 if (hasClass(grid[snakeCoor[i]], "border"));
                 removeClass(grid[snakeCoor[i]], "border");
@@ -178,25 +180,31 @@ function playRains() {
     }
     setTimeout("playRains()", 2);
 }
+
+function selectFrom(lowerValue, upperValue) {
+    let choices = upperValue - lowerValue + 1;
+    return Math.floor(Math.random() * choices + lowerValue);
+}
+
 function snakeBorder() {
-    for (var i = 0; i < 40; i++) {
+    for (var i = 0; i < borderNum; i++) {
         addClass(grid[i], "border");
-        addClass(grid[i + 1560], "border");
+        addClass(grid[i + borderNum * borderNum - borderNum], "border");
     }
-    for (var i = 40; i < 1560; i += 40) {
+    for (var i = borderNum; i < borderNum * borderNum - borderNum; i += borderNum) {
         addClass(grid[i], "border");
-        addClass(grid[i + 39], "border");
+        addClass(grid[i + borderNum - 1], "border");
     }
 }
 function snakeProper() {
     snake.len = 3;
     interval = 200;
-    this.num = 820;
+    this.num = 375;
     this.num1 = this.num;
     snakeCoor[0] = this.num;
     addClass(grid[this.num1], "border")
     for (var i = 1; i < snake.len; i++) {
-        this.num += 40;
+        this.num += borderNum;
         addClass(grid[this.num], "border")
         snakeCoor[i] = this.num;
     }
@@ -209,7 +217,7 @@ function key() {
             if (keyNum == 37 || keyNum == 38 || keyNum == 39 || keyNum == 40)
                 prev_key = keyNum;
             keyNum = event.keyCode;
-            myKey = event.keyCode;
+            accle = event.keyCode;
             if (prev_key == 37 && keyNum == 39)
                 keyNum = prev_key;
             else if (prev_key == 39 && keyNum == 37)
@@ -220,7 +228,7 @@ function key() {
                 keyNum = prev_key;
             if (keyNum != 37 && keyNum != 38 && keyNum != 39 && keyNum != 40)
                 keyNum = prev_key;
-            if (keyNum == myKey)
+            if (accle == 17)
                 interval = 100;
             flag = false;
         }
@@ -231,36 +239,39 @@ function slowdown() {
     var slowNum;
     document.onkeyup = function (event) {
         slowNum = event.keyCode;
-        if (slowNum == myKey)
+        if (slowNum == accle)
             interval = myInterval;
-        myKey = 0;
+        accle = 0;
     }
 }
 
 var foodCoor, pre_foodCoor;
-function food() {
+function foodGen() {
     var num;
     while (true) {
         num = 1;
         pre_foodCoor = foodCoor;
-        foodCoor = Math.floor(Math.random() * 1600);
-        for (var i = 0; i < 40; i++) {
-            if (foodCoor == i || foodCoor == i + 1560) {
+        foodCoor = Math.floor(Math.random() * borderNum * borderNum);
+        for (var i = 0; i < borderNum; i++) {
+            if (foodCoor == i || foodCoor == i + borderNum * borderNum - borderNum) {
                 num = 0;
                 break;
             }
         }
-        for (var i = 40; i < 1560; i += 40) {
-            if (foodCoor == i || foodCoor == i + 39) {
+        for (var i = borderNum; i < borderNum * borderNum - borderNum; i += borderNum) {
+            if (foodCoor == i || foodCoor == i + borderNum - 1) {
                 num = 0;
                 break;
             }
         }
+        if (pre_foodCoor == foodCoor)
+            num = 0;
+        
         if (num == 1) {
             break;
         }
     }
-    grid[foodCoor].className += " food";
+    addClass(grid[foodCoor], "food");
 }
 function move() {
     if (run) {
@@ -271,7 +282,7 @@ function move() {
             snakeCoor[i] = snakeCoor[i - 1];
         }
         if (keyNum == 38) {
-            this.num1 -= 40;
+            this.num1 -= borderNum;
             snakeCoor[0] = this.num1;
             addClass(grid[this.num1], "border");
             flag = true;
@@ -304,7 +315,7 @@ function move() {
             }
         }
         else if (keyNum == 40) {
-            this.num1 += 40;
+            this.num1 += borderNum;
             snakeCoor[0] = this.num1;
             addClass(grid[this.num1], "border");
             flag = true;
@@ -326,15 +337,15 @@ function rec_Food() {
         while (true) {
             num = 1;
             pre_foodCoor = foodCoor;
-            foodCoor = Math.floor(Math.random() * 1600);
-            for (var i = 0; i < 40; i++) {
-                if (foodCoor == i || foodCoor == i + 1560) {
+            foodCoor = Math.floor(Math.random() * borderNum * borderNum);
+            for (var i = 0; i < borderNum; i++) {
+                if (foodCoor == i || foodCoor == i + borderNum * borderNum - borderNum) {
                     num = 0;
                     break;
                 }
             }
-            for (var i = 40; i < 1560; i += 40) {
-                if (foodCoor == i || foodCoor == i + 39) {
+            for (var i = borderNum; i < borderNum * borderNum - borderNum; i += borderNum) {
+                if (foodCoor == i || foodCoor == i + borderNum - 1) {
                     num = 0;
                     break;
                 }
@@ -366,13 +377,13 @@ function rec_Food() {
     sorceReco.innerText = "你的得分是: " + score;
 }
 function judge() {
-    for (var i = 0; i < 40; i++) {
-        if (snakeCoor[0] == i || snakeCoor[0] == i + 1560) {
+    for (var i = 0; i < borderNum; i++) {
+        if (snakeCoor[0] == i || snakeCoor[0] == i + borderNum * borderNum - borderNum) {
             faiPro();
         }
     }
-    for (var i = 40; i < 1560; i += 40) {
-        if (snakeCoor[0] == i || snakeCoor[0] == i + 39) {
+    for (var i = borderNum; i < borderNum * borderNum - borderNum; i += borderNum) {
+        if (snakeCoor[0] == i || snakeCoor[0] == i + borderNum - 1) {
             faiPro();
         }
     }

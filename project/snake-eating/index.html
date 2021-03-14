@@ -12,19 +12,21 @@
 </head>
 
 <body>
-      <div id="container">
-        <div id="musicBox">
+      <div class="container">
+        <div id="musicBox" class="musicBox">
           <audio loop="loop" autoplay="autoplay" controls = "controls">
             <source src="http://music.163.com/song/media/outer/url?id=34040716.mp3" type="audio/mp3" />
           </audio>
         </div>
-        <table id="gameBorder"></table>
-        <button id="startBtn">开始游戏</button>
-        <button id="stopBtn">暂停游戏</button>
-        <button id="contiBtn">继续游戏</button>
+        <div class = "gameContainer">
+          <table id="gameBorder" class="gameBorder"></table>
+          <button id="startBtn" class="startBtn">开始游戏</button>
+          <button id="stopBtn" class="stopBtn">暂停游戏</button>
+          <button id="contiBtn" class="contiBtn">继续游戏</button>
+        </div>
       </div>
-    <p id="sorce"></p>
-    <p id="vx"></p>
+    <p id="sorce" class="sorce"></p>
+    <p id="vx" class="vx"></p>
     <canvas id="Meteor"></canvas>
 </body>
 

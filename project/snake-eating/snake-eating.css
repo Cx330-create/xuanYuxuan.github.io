@@ -51,16 +51,31 @@ body {
     }
 }
 
-#musicBox{
+.container{
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.gameContainer{
+    width: 750px;
+    height: 900px;
+}
+
+.gameBorder{
+    margin: 100px auto;
+}
+
+.musicBox{
     position: absolute;
     cursor: pointer;
     border-radius: 50%;
     width: 50px;
     height: 50px;
-    left: -13%;
-    bottom: 35%;
+    left: 2%;
+    bottom: 52%;
 }
-#musicBox:hover{
+.musicBox:hover{
     animation: rotating 0.5s infinite linear;
 }
 
@@ -79,14 +94,8 @@ body {
     } 
 }
 
-#musicBox audio{
+.musicBox audio{
     display: none;
-}
-
-#container{
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
 }
 
 td {
@@ -103,37 +112,34 @@ td {
     background-color: pink;
 }
 
-#startBtn {
+.startBtn {
     position: absolute;
     background-color: skyblue;
     outline: none;
     border: none;
     padding: 0.5em 1em;
     border-radius: 5px;
-    left: -15%;
-    bottom: 25%;
+    bottom: 47%;
 }
 
-#stopBtn {
+.stopBtn {
     position: absolute;
     background-color: skyblue;
     outline: none;
     border: none;
     padding: 0.5em 1em;
     border-radius: 5px;
-    left: -15%;
-    bottom: 15%;
+    bottom: 42%;
 }
 
-#contiBtn {
+.contiBtn {
     position: absolute;
     background-color: skyblue;
     outline: none;
     border: none;
     padding: 0.5em 1em;
     border-radius: 5px;
-    left: -15%;
-    bottom: 5%;
+    bottom: 37%;
 }
 
 button:hover {
@@ -156,7 +162,7 @@ button:hover {
     }
 }
 
-#sorce {
+.sorce {
     position: absolute;
     top: 80px;
     left: 100px;
@@ -164,7 +170,7 @@ button:hover {
     color: white;
 }
 
-#vx {
+.vx {
     font-size: 25px;
     color: white;
     position: absolute;
