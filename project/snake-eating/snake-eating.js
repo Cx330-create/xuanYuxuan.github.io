@@ -1,4 +1,4 @@
-var keyNum = 38, accle = 38, wipeNum = 0, judNum = 0, interval = 300,myInterval = 300;
+var keyNum = 38, wipeNum = 0, judNum = 0, interval = 300, myInterval = 300;
 var snakeCoor = new Array(), rains = new Array();
 var snake = new Object();
 var timer, context, score, pre_interval, run = false, flag = false;
@@ -32,7 +32,7 @@ window.onload = function () {
     }
     playRains();
     snakeBorder();
-    if(music.paused)
+    if (music.paused)
         musicBox.style.backgroundImage = "url(./pauseMusic.png)";
     else
         musicBox.style.backgroundImage = "url(./playMusic.png)";
@@ -74,12 +74,12 @@ window.onload = function () {
     contiBtn.onclick = function () {
         run = true;
     }
-    musicBox.onclick = function(){
-        if(music.paused){
+    musicBox.onclick = function () {
+        if (music.paused) {
             music.play();
             musicBox.style.backgroundImage = "url(./playMusic.png)";
         }
-        else{
+        else {
             music.pause();
             musicBox.style.backgroundImage = "url(./pauseMusic.png)";
         }
@@ -209,7 +209,7 @@ function key() {
             if (keyNum == 37 || keyNum == 38 || keyNum == 39 || keyNum == 40)
                 prev_key = keyNum;
             keyNum = event.keyCode;
-            accle = event.keyCode;
+            myKey = event.keyCode;
             if (prev_key == 37 && keyNum == 39)
                 keyNum = prev_key;
             else if (prev_key == 39 && keyNum == 37)
@@ -220,20 +220,20 @@ function key() {
                 keyNum = prev_key;
             if (keyNum != 37 && keyNum != 38 && keyNum != 39 && keyNum != 40)
                 keyNum = prev_key;
-            if(accle == 17)
+            if (keyNum == myKey)
                 interval = 100;
             flag = false;
         }
     }
 }
 
-function slowdown(){
+function slowdown() {
     var slowNum;
-    document.onkeyup = function(event){
+    document.onkeyup = function (event) {
         slowNum = event.keyCode;
-        if(slowNum == accle)
+        if (slowNum == myKey)
             interval = myInterval;
-        accle = 0;
+        myKey = 0;
     }
 }
 
@@ -265,7 +265,7 @@ function food() {
 function move() {
     if (run) {
         clearInterval(timer);
-        timer = setInterval(move,interval)
+        timer = setInterval(move, interval)
         snake.tail = snakeCoor[snake.len - 1];
         for (var i = snake.len - 1; i > 0; i--) {
             snakeCoor[i] = snakeCoor[i - 1];
@@ -352,7 +352,7 @@ function rec_Food() {
             }
         }
         grid[foodCoor].className += " food";
-        if (interval > 100){
+        if (interval > 100) {
             interval -= 10;
             interval = myInterval;
         }
