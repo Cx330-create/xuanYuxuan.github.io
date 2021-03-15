@@ -1,9 +1,10 @@
-window.onload = function (event) {
+window.onload = function () {
     var Encryption = new decode().decode("V293bnV1Xw==");
     while (true) {
         var password = prompt("请输入密码访问该页面.");
         if (password === null) {
             document.body.remove();
+            document.documentElement.innerHTML = '<body><p style="font-size: 100px;text-align: center;">验证失败</p><body>';
             break;
         } else if (password != Encryption) {
             alert("密码错误！！请重新输入");
