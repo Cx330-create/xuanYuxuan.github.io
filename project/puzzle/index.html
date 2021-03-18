@@ -3,47 +3,204 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Puzzle</title>
-    <script src="./decode.js" type="text/javascript"></script>
-    <script src="./Puzzle.js" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="./Puzzle.css">
+    <title>puzzle</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            z-index: -1;
+        }
+
+        .puzzle-container {
+            position: relative;
+            display: flex;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .puzzle-container div {
+            position: absolute;
+            overflow: hidden;
+        }
+
+        img {
+            position: absolute;
+        }
+
+        input {
+            display: block;
+            margin: 0 auto;
+        }
+    </style>
+    <script>
+        window.onload = function () {
+            var isPuzzle = [];
+            var puzzleContainer = document.querySelector("#puzzle-container");
+            var file = document.querySelector('#file');
+            var div = document.querySelectorAll(".puzzle-container div");
+            var preImgLeft, preImgTop, preDivLeft, preDivTop, lengWid, imgSrc, getPixels, isLoaded, getHpixels, getWpixels;
+            file.onchange = function (event) { //监听文件的改变
+                var reader = new FileReader();
+                reader.readAsDataURL(this.files[0]);
+                reader.onload = function (event) {
+                    imgSrc = reader.result;
+                    for (let i = 0; i < 9; i++) {
+                        var Img = document.createElement("img");
+                        div[i].appendChild(Img);
+                    }
+                    var img = document.querySelectorAll("img");
+                    getImg();
+                    setTimeout(function () {
+                        {
+                            if (getHpixels == getWpixels) {
+                                puzzleContainer.style.width = getWpixels + 4 + "px";
+                                puzzleContainer.style.height = getHpixels + 4 + "px";
+                                puzzleContainer.style.border = "5px solid skyblue";
+                                for (let i = 0; i < 9; i++) {
+                                    div[i].style.width = Math.ceil((puzzleContainer.clientWidth - 4) / 3) + "px";
+                                    div[i].style.height = Math.ceil((puzzleContainer.clientWidth - 4) / 3) + "px";
+                                    img[i].setAttribute("src", imgSrc);
+                                    img[i].style.width = (puzzleContainer.clientWidth - 4) + "px";
+                                    img[i].style.height = (puzzleContainer.clientWidth - 4) + "px";
+                                }
+                                lengWid = Math.ceil(div[0].clientWidth);
+                                for (let i = 0; i < 3; i++)
+                                    isPuzzle[i] = new Array();
+                                puzzle(img, lengWid);
+                                for (let i = 0; i < 9; i++) {
+                                    div[i].onmousedown = function (event) {
+                                        preImgLeft = img[i].offsetLeft + "px";
+                                        preImgTop = img[i].offsetTop + "px";
+                                        preDivLeft = div[i].offsetLeft + "px";
+                                        preDivTop = div[i].offsetTop + "px";
+                                        var ol = event.clientX - div[i].offsetLeft;
+                                        var ot = event.clientY - div[i].offsetTop;
+                                        div[i].style.zIndex = "100";
+                                        document.onmousemove = function (event) {
+                                            //当鼠标移动时被拖拽元素跟随鼠标移动
+                                            //获取鼠标的坐标
+                                            var left = event.clientX - ol;
+                                            var top = event.clientY - ot;
+                                            div[i].style.left = left + "px";
+                                            div[i].style.top = top + "px";
+                                        }
+                                        return false;
+                                    }
+                                    div[i].onmouseup = function () {
+                                        var distanceLeft = div[i].offsetLeft;
+                                        var disanceTop = div[i].offsetTop;
+                                        var number;
+                                        div[i].style.zIndex = "0";
+                                        if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= -8 && disanceTop <= 12)
+                                            number = 0;
+                                        else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= -8 && disanceTop <= 12)
+                                            number = 1;
+                                        else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= -8 && disanceTop <= 12)
+                                            number = 2;
+                                        else if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
+                                            number = 3;
+                                        else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
+                                            number = 4;
+                                        else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
+                                            number = 5;
+                                        else if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
+                                            number = 6;
+                                        else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
+                                            number = 7;
+                                        else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
+                                            number = 8;
+                                        else {
+                                            div[i].style.left = preDivLeft;
+                                            div[i].style.top = preDivTop;
+                                        }
+                                        if (number >= 0 && number <= 8)
+                                            swapPosition(img, div, i, number);
+                                        document.onmousemove = null;
+                                        //取消document的onmouseup事件
+                                        document.onmouseup = null;
+                                    }
+                                }
+                                file.setAttribute("disabled","disabled");
+                            }else{
+                                alert("请选择正方形的图片");
+                                for(let i = 0;i < 9;i++)
+                                    div[i].removeChild(img[i]);
+                            }
+                        }
+                    }, 0);
+                }
+            }
+            function selectFrom(lowerValue, upperValue) {
+                let choices = upperValue - lowerValue + 1;
+                return Math.floor(Math.random() * choices + lowerValue);
+            }
+            function getImg() {
+                var image = new Image();
+                image.src = imgSrc;
+                document.body.appendChild(image);
+                image.onload = function () {
+                    getWpixels = Math.ceil(image.width);
+                    getHpixels = Math.ceil(image.height);
+                    document.body.lastChild.parentNode.removeChild(document.body.lastChild);
+                }
+            }
+            function puzzle(imgNodelist, LengWid) {
+                var coumNum = selectFrom(0, 2), rowNum = selectFrom(0, 2);
+                for (let i = 0; i < 3; i++) {
+                    div[i].style.left = LengWid * i + 1 + i + "px";
+                    div[i].style.top = 1 + "px";
+                    div[i + 3].style.left = LengWid * i + 1 + i + "px";
+                    div[i + 3].style.top = LengWid + 2 + "px";
+                    div[i + 6].style.left = LengWid * i + 1 + i + "px";
+                    div[i + 6].style.top = LengWid * 2 + 3 + "px";
+                }
+                for (let i = 0; i < 9; i++) {
+                    isPuzzle[coumNum][rowNum] = 1;
+                    imgNodelist[i].style.left = LengWid * (-coumNum) + "px";
+                    imgNodelist[i].style.top = LengWid * (-rowNum) + "px";
+                    if (i != 8)
+                        while (true) {
+                            coumNum = selectFrom(0, 2);
+                            rowNum = selectFrom(0, 2);
+                            if (!isPuzzle[coumNum][rowNum])
+                                break;
+                        }
+                }
+            }
+            function swapPosition(imgNode, divNode, index, num) {
+                imgNode[index].style.left = imgNode[num].offsetLeft + "px";
+                imgNode[index].style.top = imgNode[num].offsetTop + "px";
+                imgNode[num].style.left = preImgLeft;
+                imgNode[num].style.top = preImgTop;
+                divNode[index].style.left = preDivLeft;
+                divNode[index].style.top = preDivTop;
+            }
+        }
+    </script>
 </head>
 
 <body>
-    <p id="font"></p>
-    <div id="all">
-        <div id="Puzzle">
-            <img src="./Puzzle(6).png" alt="" id="Puzzle1">
-            <img src="./Puzzle(9).png" alt="" id="Puzzle2">
-            <img src="./Puzzle(5).png" alt="" id="Puzzle3">
-            <img src="./Puzzle(4).png" alt="" id="Puzzle4">
-            <img src="./Puzzle(3).png" alt="" id="Puzzle5">
-            <img src="./Puzzle(1).png" alt="" id="Puzzle6">
-            <img src="./Puzzle(8).png" alt="" id="Puzzle7">
-            <img src="./Puzzle(7).png" alt="" id="Puzzle8">
-            <img src="./Puzzle(2).png" alt="" id="Puzzle9">
-            <br><br>
-        </div>
-        <img id="img" src="./Puzzle1.png" alt="">
+    <div class="puzzle-container" id="puzzle-container">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
     </div>
-    <h2 style="display: inline-block;color: yellowgreen;">请把沈子吟师姐拼出来! ! !有奖励! ! !</h2>
-    <br><br>
-    <h4 style="display: inline-block;color:red;">若遇某些奇怪的bug,请刷新界面！！！</h2>
-        <script language=javascript>
-            document.onmousedown = function (event) {
-                if (event.button == 2) {
-                    alert("你想干什么？？？");
-                }
-            }
-            document.onkeydown = function (event) {
-                var keyCode = event.keyCode || event.which || event.charCode;
-                if (keyCode && keyCode == 123) {
-                    alert("你想干什么？？？");
-                    return false;
-                }
-            }
-        </script>
+    <input type="file" id="file">
 </body>
 
 </html>
