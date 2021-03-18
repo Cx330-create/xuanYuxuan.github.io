@@ -17,6 +17,7 @@
             width: 100%;
             height: 100%;
             position: relative;
+            background-image: url(./star.jpg);
             z-index: -1;
         }
 
@@ -36,13 +37,48 @@
             position: absolute;
         }
 
-        input {
+        label {
             display: block;
-            margin: 0 auto;
+            margin: 30px auto;
+            color: purple;
+            background: linear-gradient(to top, #d5dee7 0%, #ffafbd 0%, #c9ffbf 100%);
+            padding: 0.5em 1em;
+            border-radius: 5px;
+            width: 100px;
+            height: 20px;
+            line-height: 20px;
+            z-index: 1;
+            cursor: pointer;
         }
     </style>
     <script>
         window.onload = function () {
+            setInterval(function () {
+                //创建rain元素
+                var rain = document.createElement("div");
+                //初始化rain属性
+                rain.style.position = "fixed";
+                rain.style.height = "150px";
+                rain.style.width = "2px";
+                rain.style.background = "white";       //有图片赋值图片路径，或者赋值16进制的颜色代码
+                rain.style.filter = "blur(1px)";
+                rain.style.top = "0px";
+                rain.style.left = Math.random() * 1920 + "px";                    //随机化位置
+                rain.style.opacity = parseInt(Math.random() * 10) / 10 + "";        //随机化透明度
+                //向body里添加子节点rain
+                document.body.appendChild(rain);
+                var timer = setInterval(function () {
+                    var height = parseInt(rain.style.top);
+                    var k = 1;
+                    k++;
+                    rain.style.top = height + 5 * Math.pow(k, 2) + "px";             //模拟重力加速度
+                    //当雨滴到达底部后消失并清除子节点rain
+                    if (rain.style.top >= "900px") {
+                        clearInterval(timer);
+                        rain.parentNode.removeChild(rain);
+                    }
+                }, 4)                        //每隔4毫秒雨滴下落一次
+            }, 12)                            //每隔8毫秒生成一次雨滴
             var isPuzzle = [];
             var puzzleContainer = document.querySelector("#puzzle-container");
             var file = document.querySelector('#file');
@@ -60,81 +96,79 @@
                     var img = document.querySelectorAll("img");
                     getImg();
                     setTimeout(function () {
-                        {
-                            if (getHpixels == getWpixels) {
-                                puzzleContainer.style.width = getWpixels + 4 + "px";
-                                puzzleContainer.style.height = getHpixels + 4 + "px";
-                                puzzleContainer.style.border = "5px solid skyblue";
-                                for (let i = 0; i < 9; i++) {
-                                    div[i].style.width = Math.ceil((puzzleContainer.clientWidth - 4) / 3) + "px";
-                                    div[i].style.height = Math.ceil((puzzleContainer.clientWidth - 4) / 3) + "px";
-                                    img[i].setAttribute("src", imgSrc);
-                                    img[i].style.width = (puzzleContainer.clientWidth - 4) + "px";
-                                    img[i].style.height = (puzzleContainer.clientWidth - 4) + "px";
-                                }
-                                lengWid = Math.ceil(div[0].clientWidth);
-                                for (let i = 0; i < 3; i++)
-                                    isPuzzle[i] = new Array();
-                                puzzle(img, lengWid);
-                                for (let i = 0; i < 9; i++) {
-                                    div[i].onmousedown = function (event) {
-                                        preImgLeft = img[i].offsetLeft + "px";
-                                        preImgTop = img[i].offsetTop + "px";
-                                        preDivLeft = div[i].offsetLeft + "px";
-                                        preDivTop = div[i].offsetTop + "px";
-                                        var ol = event.clientX - div[i].offsetLeft;
-                                        var ot = event.clientY - div[i].offsetTop;
-                                        div[i].style.zIndex = "100";
-                                        document.onmousemove = function (event) {
-                                            //当鼠标移动时被拖拽元素跟随鼠标移动
-                                            //获取鼠标的坐标
-                                            var left = event.clientX - ol;
-                                            var top = event.clientY - ot;
-                                            div[i].style.left = left + "px";
-                                            div[i].style.top = top + "px";
-                                        }
-                                        return false;
-                                    }
-                                    div[i].onmouseup = function () {
-                                        var distanceLeft = div[i].offsetLeft;
-                                        var disanceTop = div[i].offsetTop;
-                                        var number;
-                                        div[i].style.zIndex = "0";
-                                        if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= -8 && disanceTop <= 12)
-                                            number = 0;
-                                        else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= -8 && disanceTop <= 12)
-                                            number = 1;
-                                        else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= -8 && disanceTop <= 12)
-                                            number = 2;
-                                        else if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
-                                            number = 3;
-                                        else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
-                                            number = 4;
-                                        else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
-                                            number = 5;
-                                        else if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
-                                            number = 6;
-                                        else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
-                                            number = 7;
-                                        else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
-                                            number = 8;
-                                        else {
-                                            div[i].style.left = preDivLeft;
-                                            div[i].style.top = preDivTop;
-                                        }
-                                        if (number >= 0 && number <= 8)
-                                            swapPosition(img, div, i, number);
-                                        document.onmousemove = null;
-                                        //取消document的onmouseup事件
-                                        document.onmouseup = null;
-                                    }
-                                }
-                                file.setAttribute("disabled","disabled");
-                            }else{
-                                alert("请选择正方形的图片");
-                                for(let i = 0;i < 9;i++)
-                                    div[i].removeChild(img[i]);
+                        if (getHpixels == getWpixels) {
+                            puzzleContainer.style.width = getWpixels + 4 + "px";
+                            puzzleContainer.style.height = getHpixels + 4 + "px";
+                            puzzleContainer.style.border = "5px solid skyblue";
+                            for (let i = 0; i < 9; i++) {
+                                div[i].style.width = Math.ceil((puzzleContainer.clientWidth - 4) / 3) + "px";
+                                div[i].style.height = Math.ceil((puzzleContainer.clientWidth - 4) / 3) + "px";
+                                img[i].setAttribute("src", imgSrc);
+                                img[i].style.width = (puzzleContainer.clientWidth - 4) + "px";
+                                img[i].style.height = (puzzleContainer.clientWidth - 4) + "px";
                             }
+                            lengWid = Math.ceil(div[0].clientWidth);
+                            for (let i = 0; i < 3; i++)
+                                isPuzzle[i] = new Array();
+                            puzzle(img, lengWid);
+                            for (let i = 0; i < 9; i++) {
+                                div[i].onmousedown = function (event) {
+                                    preImgLeft = img[i].offsetLeft + "px";
+                                    preImgTop = img[i].offsetTop + "px";
+                                    preDivLeft = div[i].offsetLeft + "px";
+                                    preDivTop = div[i].offsetTop + "px";
+                                    var ol = event.clientX - div[i].offsetLeft;
+                                    var ot = event.clientY - div[i].offsetTop;
+                                    div[i].style.zIndex = "100";
+                                    document.onmousemove = function (event) {
+                                        //当鼠标移动时被拖拽元素跟随鼠标移动
+                                        //获取鼠标的坐标
+                                        var left = event.clientX - ol;
+                                        var top = event.clientY - ot;
+                                        div[i].style.left = left + "px";
+                                        div[i].style.top = top + "px";
+                                    }
+                                    return false;
+                                }
+                                div[i].onmouseup = function () {
+                                    var distanceLeft = div[i].offsetLeft;
+                                    var disanceTop = div[i].offsetTop;
+                                    var number;
+                                    div[i].style.zIndex = "0";
+                                    if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= -8 && disanceTop <= 12)
+                                        number = 0;
+                                    else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= -8 && disanceTop <= 12)
+                                        number = 1;
+                                    else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= -8 && disanceTop <= 12)
+                                        number = 2;
+                                    else if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
+                                        number = 3;
+                                    else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
+                                        number = 4;
+                                    else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= lengWid - 8 && disanceTop <= lengWid + 12)
+                                        number = 5;
+                                    else if (distanceLeft >= -8 && distanceLeft <= 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
+                                        number = 6;
+                                    else if (distanceLeft >= lengWid - 8 && distanceLeft <= lengWid + 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
+                                        number = 7;
+                                    else if (distanceLeft >= lengWid * 2 - 8 && distanceLeft <= lengWid * 2 + 12 && disanceTop >= lengWid * 2 - 8 && disanceTop <= lengWid * 2 + 12)
+                                        number = 8;
+                                    else {
+                                        div[i].style.left = preDivLeft;
+                                        div[i].style.top = preDivTop;
+                                    }
+                                    if (number >= 0 && number <= 8)
+                                        swapPosition(img, div, i, number);
+                                    document.onmousemove = null;
+                                    //取消document的onmouseup事件
+                                    document.onmouseup = null;
+                                }
+                            }
+                            file.setAttribute("disabled", "disabled");
+                        } else {
+                            alert("请选择正方形的图片");
+                            for (let i = 0; i < 9; i++)
+                                div[i].removeChild(img[i]);
                         }
                     }, 0);
                 }
@@ -200,7 +234,8 @@
         <div></div>
         <div></div>
     </div>
-    <input type="file" id="file">
+    <label for="file">点击上传文件</label>
+    <input type="file" accept="image/png,image/jpeg,image/gif" id="file" style="display: none;">
 </body>
 
 </html>
