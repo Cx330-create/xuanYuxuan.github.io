@@ -20,11 +20,13 @@
             background-size: cover;
             z-index: -1;
         }
-        .game-border{
+
+        .game-border {
             display: flex;
             margin: 0 auto;
             justify-content: space-between;
         }
+
         .puzzle-container {
             position: relative;
             display: flex;
@@ -75,6 +77,9 @@
                     getImg();
                     setTimeout(function () {
                         if (getHpixels == getWpixels) {
+                            document.getElementById("game-border").lastChild.style.width = 604 + "px";
+                            document.getElementById("game-border").lastChild.style.height = 604 + "px";
+                            document.getElementById("game-border").lastChild.style.border = "5px solid skyblue";
                             gameBorder.style.width = 600 * 2 + 30 + "px";
                             gameBorder.style.height = 620 + "px";
                             puzzleContainer.style.width = 604 + "px";
@@ -164,9 +169,8 @@
                 image.onload = function () {
                     getWpixels = Math.ceil(image.width);
                     getHpixels = Math.ceil(image.height);
-                    document.getElementById("game-border").lastChild.style.width = 604 + "px";
-                    document.getElementById("game-border").lastChild.style.height = 604 + "px";
-                    document.getElementById("game-border").lastChild.style.border = "5px solid skyblue";
+                    if(getHpixels != getWpixels)
+                        document.getElementById("game-border").lastChild.parentNode.removeChild(document.getElementById("game-border").lastChild);
                 }
             }
             function puzzle(imgNodelist, LengWid) {
