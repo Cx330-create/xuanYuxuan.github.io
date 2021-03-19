@@ -20,11 +20,14 @@
             background-size: cover;
             z-index: -1;
         }
-
+        .game-border{
+            display: flex;
+            margin: 0 auto;
+            justify-content: space-between;
+        }
         .puzzle-container {
             position: relative;
             display: flex;
-            margin: 0 auto;
             flex-wrap: wrap;
         }
 
@@ -33,7 +36,7 @@
             overflow: hidden;
         }
 
-        img {
+        .puzzle-container img {
             position: absolute;
         }
 
@@ -54,6 +57,7 @@
     <script>
         window.onload = function () {
             var isPuzzle = [];
+            var gameBorder = document.querySelector("#game-border");
             var puzzleContainer = document.querySelector("#puzzle-container");
             var file = document.querySelector('#file');
             var div = document.querySelectorAll(".puzzle-container div");
@@ -71,8 +75,10 @@
                     getImg();
                     setTimeout(function () {
                         if (getHpixels == getWpixels) {
-                            puzzleContainer.style.width = getWpixels + 4 + "px";
-                            puzzleContainer.style.height = getHpixels + 4 + "px";
+                            gameBorder.style.width = 600 * 2 + 30 + "px";
+                            gameBorder.style.height = 620 + "px";
+                            puzzleContainer.style.width = 604 + "px";
+                            puzzleContainer.style.height = 604 + "px";
                             puzzleContainer.style.border = "5px solid skyblue";
                             for (let i = 0; i < 9; i++) {
                                 div[i].style.width = Math.ceil((puzzleContainer.clientWidth - 4) / 3) + "px";
@@ -154,11 +160,13 @@
             function getImg() {
                 var image = new Image();
                 image.src = imgSrc;
-                document.body.appendChild(image);
+                document.getElementById("game-border").appendChild(image);
                 image.onload = function () {
                     getWpixels = Math.ceil(image.width);
                     getHpixels = Math.ceil(image.height);
-                    document.body.lastChild.parentNode.removeChild(document.body.lastChild);
+                    document.getElementById("game-border").lastChild.style.width = 604 + "px";
+                    document.getElementById("game-border").lastChild.style.height = 604 + "px";
+                    document.getElementById("game-border").lastChild.style.border = "5px solid skyblue";
                 }
             }
             function puzzle(imgNodelist, LengWid) {
@@ -197,16 +205,18 @@
 </head>
 
 <body>
-    <div class="puzzle-container" id="puzzle-container">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+    <div class="game-border" id="game-border">
+        <div class="puzzle-container" id="puzzle-container">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
     </div>
     <label for="file">点击上传图片</label>
     <input type="file" accept="image/png,image/jpeg,image/gif" id="file" style="display: none;">
