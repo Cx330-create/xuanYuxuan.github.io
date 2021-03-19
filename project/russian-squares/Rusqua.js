@@ -1,5 +1,6 @@
-var square = [], pre_square = [], array = [], isRusqua = [];
-var gameHeight = 35, gameWidth = 25, transNum = 0, pre_judgeNum = 1, speed = 300;
+//该俄罗斯方块通过建立一个表格 然后对表格里的每一个子元素进行动态添加消除背景颜色来实现 由于操作表格是在一维数组上进行的 计算的时候有些复杂(二维数组上操作应该会更加简单)
+var square = [], pre_square = [], array = [], isSquare = [];//square用来存储方块的每个位置 isSquare数组用来判断每个位置上是否有方块
+var gameHeight = 35, gameWidth = 25, transNum = 0, pre_judgeNum = 1, speed = 300, score = 0;//pre_judgeNum用来存储上一个形状对应的数字 当无法变形时就可以保持上一个形状
 var Judge, signNum, judgeNum, pre_transNum, num;
 var stop, staticx, timer, run = true;
 var img = new Image();
@@ -146,12 +147,14 @@ window.onload = function () {
             stop = requestAnimationFrame(arguments.callee);
         })
     }
+    //以上代码是樱花飘落的效果，运用了html5的canvas，本人还没学所以....懂的都懂
+
     //获取一定范围的随机数
     function selectFrom(lowerValue, upperValue) {
         let choices = upperValue - lowerValue + 1;
         return Math.floor(Math.random() * choices + lowerValue);
     }
-
+    //构造出游戏边框
     function gameBorder() {
         for (let i = 0; i < gameWidth; i++) {
             addClass(grid[i], "border");
@@ -161,7 +164,9 @@ window.onload = function () {
             addClass(grid[i * gameWidth], "border");
             addClass(grid[i * gameWidth + gameWidth - 1], "border");
         }
+        scores.innerText = "你的得分:"+ score;
     }
+    //提示下一个方块形状
     function shape() {
         for (let i = 0; i < 16; i++) {
             removeClass(Tip[i], "runColor");
@@ -208,6 +213,7 @@ window.onload = function () {
                 break;
         }
     }
+    //当方块落下时重新生成下一个方块
     function rand_Gen() {
         switch (pre_judgeNum) {
             case 1:
@@ -250,11 +256,12 @@ window.onload = function () {
         }
         for (let i = 0; i < 4; i++)
             addClass(grid[square[i]], "runColor");
-        Judge = 0;
+        Judge = false;
         shape();
     }
+    //方块的变形 七种形状 其中六种可变形
     function Deformation() {
-        num = 0;
+        num = false;
         pre_transNum = transNum;
         if (pre_judgeNum == 1 && transNum == 0) {
             square[0] = square[0] - 2 + gameWidth;
@@ -348,30 +355,31 @@ window.onload = function () {
         }
         for (let i = 0; i < 4; i++) {
             for (let t = 1; t < gameHeight; t++) {
-                if (square[i] == t * gameWidth + gameWidth - 1 || square[i] == t * gameWidth || isRusqua[square[i]] == 1) {
+                if (square[i] == t * gameWidth + gameWidth - 1 || square[i] == t * gameWidth || isSquare[square[i]] == 1) {
                     for (let j = 0; j < 4; j++) {
                         square[j] = pre_square[j];
                     }
-                    num = 1;
+                    num = true;
                     transNum = pre_transNum;
                     break;
                 }
-            }
+            }//判断变形后是否触碰边框或者已有方块 是则不能变形
             for (let t = gameWidth * gameHeight + 1; t < gameWidth * gameHeight + gameWidth - 1; t++) {
                 if (square[i] == t) {
                     for (let j = 0; j < 4; j++) {
                         square[j] = pre_square[j];
                     }
-                    num = 1;
+                    num = true;
                     transNum = pre_transNum;
                     break;
                 }
             }
-            if (num == 1)
+            if (num)
                 break;
         }
     }
-
+    //按键检测 ←左移 →右移 ↑变形 ↓加速
+    //定时器建立时间间隔就不能改变，所以要重复开启关闭定时器来实现加速效果
     function Key() {
         document.onkeydown = function (event) {
             for (let i = 0; i < 4; i++)
@@ -379,38 +387,38 @@ window.onload = function () {
             this.key = event.keyCode;
             switch (this.key) {
                 case 37:
-                    num = 0;
+                    num = false;
                     for (let i = 0; i < 4; i++)
                         square[i]--;
                     for (let i = 0; i < 4; i++) {
                         for (let t = 1; t < gameHeight; t++) {
-                            if (square[i] == t * gameWidth || isRusqua[square[i]] == 1) {
+                            if (square[i] == t * gameWidth || isSquare[square[i]] == 1) {
                                 for (let j = 0; j < 4; j++) {
                                     square[j] = pre_square[j];
                                 }
-                                num = 1;
+                                num = true;
                                 break;
                             }
                         }
-                        if (num == 1)
+                        if (num)
                             break;
                     }
                     break;
                 case 39:
-                    num = 0;
+                    num = false;
                     for (let i = 0; i < 4; i++)
                         square[i]++;
                     for (let i = 0; i < 4; i++) {
                         for (let t = 1; t < gameHeight; t++) {
-                            if (square[i] == t * gameWidth + gameWidth - 1 || isRusqua[square[i]] == 1) {
+                            if (square[i] == t * gameWidth + gameWidth - 1 || isSquare[square[i]] == 1) {
                                 for (let j = 0; j < 4; j++) {
                                     square[j] = pre_square[j];
                                 }
-                                num = 1;
+                                num = true;
                                 break;
                             }
                         }
-                        if (num == 1)
+                        if (num)
                             break;
                     }
                     break;
@@ -422,101 +430,101 @@ window.onload = function () {
                     break;
             }
             for (let i = 0; i < 4; i++)
-                array[i] = 1;
+                array[i] = true;
             for (let i = 0; i < 4; i++) {
                 for (let j = 0; j < 4; j++) {
                     if (pre_square[j] == square[i])
-                        array[i] = 0;
+                        array[i] = false;
                 }
             }
             for (let i = 0; i < 4; i++) {
-                this.k = 1;
+                this.isRemove = true;
                 for (let j = 0; j < 4; j++) {
                     if (pre_square[i] == square[j]) {
-                        this.k = 0;
+                        this.isRemove = false;
                     }
                 }
-                if (array[i] == 1)
+                if (array[i])
                     addClass(grid[square[i]], "runColor");
-                if (this.k == 1)
+                if (this.isRemove)
                     removeClass(grid[pre_square[i]], "runColor");
             }
         }
     }
-
-    Key.prototype.slowdown = function () {
+    //↓键松开恢复之前的速度
+    function slowdown() {
         document.onkeyup = function (event) {
             this.slow = event.keyCode;
             if (this.slow == 40)
                 speed = 300;
         }
     }
-
+    //实现方块移动
     function move() {
         if (run) {
-            signNum = 1;
-            for (let i = 0; i < 4; i++)
+            signNum = true;
+            for (let i = 0; i < 4; i++){
+                array[i] = true;
                 pre_square[i] = square[i];
-            for (let i = 0; i < 4; i++)
-                array[i] = 1;
+            }
             for (let i = 0; i < 4; i++) {
                 square[i] += gameWidth;
                 for (let j = 0; j < 4; j++) {
                     if (pre_square[j] == square[i])
-                        array[i] = 0;
+                        array[i] = false;
                 }
             }
             clearInterval(timer);
             timer = setInterval(move, speed);
             judge();
-            if (signNum == 1) {
+            if (signNum) {
                 for (let i = 0; i < 4; i++) {
-                    this.q = 1;
+                    this.isRemove = true;
                     for (let j = 0; j < 4; j++) {
                         if (pre_square[i] == square[j]) {
-                            this.q = 0;
+                            this.isRemove = false;
                         }
                     }
-                    if (array[i] == 1)
+                    if (array[i])
                         addClass(grid[square[i]], "runColor");
-                    if (this.q == 1)
+                    if (this.isRemove)
                         removeClass(grid[pre_square[i]], "runColor");
                 }
             }
         }
     }
-
+    //判断方块是否落到尽头
     function judge() {
-        num = 0;
+        num = false;
         for (let i = 0; i < 4; i++) {
             for (let j = gameWidth * gameHeight + 1; j < gameWidth * gameHeight + gameWidth - 1; j++) {
                 if (square[i] == j) {
-                    signNum = 0;
+                    signNum = false;
                     clearInterval(timer);
-                    num = 1;
+                    num = true;
                     break;
                 }
             }
             for (let j = 0; j < 4; j++) {
-                if (isRusqua[square[j]] == 1) {
-                    signNum = 0;
+                if (isSquare[square[j]] == 1) {
+                    signNum = false;
                     clearInterval(timer);
-                    num = 1;
+                    num = true;
                     break;
                 }
             }
-            if (num == 1) {
+            if (num) {
                 for (let t = 0; t < 4; t++) {
-                    isRusqua[pre_square[t]] = 1;
+                    isSquare[pre_square[t]] = 1;
                     addClass(grid[pre_square[t]], "stopColor");
                     removeClass(grid[pre_square[t]], "runColor");
                 }
                 transNum = 0;
-                Judge = 1;
+                Judge = true;
                 pre_judgeNum = judgeNum;
                 eliminate();
                 timer = setInterval(function () {
-                    if (Judge == 1)
+                    if (Judge)
                         rand_Gen();
                     else
                         move();
@@ -526,18 +534,20 @@ window.onload = function () {
             }
         }
     }
+    //满一行消除
     function eliminate() {
-        let canElirow = [];
+        let canElirow = [];//表示可消除的行位置
+        // let flash = document.getElementsByClassName("flash");
         this.canEliminate = false;
-        this.index = 0;
+        this.index = 0; //表示可消除的行数
         for (let i = gameHeight - 1; i >= 1; i--) {
             this.judgeEliminate = true;
             for (let j = i * gameWidth + 1; j <= i * gameWidth + gameWidth - 2; j++) {
-                if (isRusqua[j] != 1) {
-                    this.judgeEliminate = false;
+                if (isSquare[j] != 1) {
+                    this.judgeEliminate = false; //false则证明有位置上没有方块 不满足消除条件
                     break;
                 }
-            }
+            }//循环遍历判断是否满足消除的条件
             if (this.judgeEliminate) {
                 canElirow[this.index] = i;
                 this.canEliminate = true;
@@ -545,29 +555,37 @@ window.onload = function () {
             }
         }
         if (this.canEliminate) {
+            let scores = document.getElementById("score");
             for (let i = 0; i < this.index; i++) {
                 for (let j = (canElirow[i] + i) * gameWidth + 1; j <= (canElirow[i] + i) * gameWidth + gameWidth - 2; j++) {
                     removeClass(grid[j], "stopColor");
-                    isRusqua[j] = 0;
-                }
+                    isSquare[j] = 0;
+                }//消除该行上的所有方块
                 for (let t = canElirow[i] + i - 1; t >= 1; t--) {
                     for (let k = t * gameWidth + 1; k <= t * gameWidth + gameWidth - 2; k++) {
-                        if (isRusqua[k] == 1) {
+                        if (isSquare[k] == 1) {
                             removeClass(grid[k], "stopColor");
-                            isRusqua[k] = 0;
-                            isRusqua[k + gameWidth] = 1;
-                            if (isRusqua[k + gameWidth] == 1 && k + gameWidth < gameWidth * gameHeight)
+                            isSquare[k] = 0;
+                            isSquare[k + gameWidth] = 1;
+                            if (isSquare[k + gameWidth] == 1 && k + gameWidth < gameWidth * gameHeight)
                                 addClass(grid[k + gameWidth], "stopColor");
+                            //将之前有方块的位置整体往下移动
                         }
                     }
                 }
             }
+            // flash[this.index - 1].style.display = "block";
+            // delay = setTimeout(function () {
+            //     flash[this.index - 1].style.display = "none";
+            // }, 50);
+            score += this.index * 10;
+            scores.innerText = "你的得分:"+ score;
         }
     }
-
+    //游戏结束清除定时器
     function end() {
         for (let i = gameWidth + 1; i < gameWidth * 2; i++) {
-            if (isRusqua[i] == 1) {
+            if (isSquare[i] == 1) {
                 clearInterval(timer);
                 break;
             }
@@ -577,41 +595,41 @@ window.onload = function () {
     function addClass(obj, cn) {
         if (!hasClass(obj, cn))
             obj.className += " " + cn;
-    }
+    }//添加类名
     function hasClass(obj, cn) {
         let exp = new RegExp("\\b" + cn + "\\b");
         return exp.test(obj.className);
-    }
+    }//判断是否有某个类名
     function removeClass(obj, cn) {
         let exp = new RegExp("\\b" + cn + "\\b");
         obj.className = obj.className.replace(exp, "");
-    }
-
-    function btnEffect (obj){
+    }//移除类名
+    function btnAnimation(obj) {
         addClass(obj, "btn-left-top-shadow")
         removeClass(obj, "btn-right-bottom-shadow");
         obj.onmouseup = function () {
             removeClass(obj, "btn-left-top-shadow");
             addClass(obj, "btn-right-bottom-shadow");
-        }     
-    }
+        }
+    }//按钮点击动画
 
     img.onload = function () {
         startSakura();
-    }
+    }//加载樱花效果
 
-    let gameborder = document.getElementById("gameBorder");
+    let gameContainer = document.getElementById("game-border");
     let tip = document.getElementById("tip");
     let begin = document.getElementById("begin");
     let stopContinue = document.getElementById("stop-continue");
-    let musicBox = document.getElementById("musicBox");
+    let musicBox = document.getElementById("music-box");
     let music = document.getElementsByTagName("audio")[0];
+    let scores = document.getElementById("score");
     for (let i = 1; i <= gameHeight + 1; i++) {
         tr = document.createElement("tr");
-        gameborder.appendChild(tr);
+        gameContainer.appendChild(tr);
         for (let j = 1; j <= gameWidth; j++) {
             td = document.createElement("td");
-            td.className = "grid";
+            td.setAttribute("class", "grid");
             tr.appendChild(td);
         }
     }
@@ -620,15 +638,14 @@ window.onload = function () {
         tip.appendChild(tr);
         for (let j = 1; j <= 4; j++) {
             td = document.createElement("td");
-            td.className = "Tip";
+            td.setAttribute("class", "Tip");
             tr.appendChild(td);
         }
     }
     let grid = document.getElementsByClassName("grid");
     let Tip = document.getElementsByClassName("Tip");
-    let keys = new Key();
     gameBorder();
-    Judge = 1;
+    Judge = true;
     if (music.paused)
         musicBox.style.backgroundImage = "url(./pauseMusic.png)";
     else
@@ -636,21 +653,21 @@ window.onload = function () {
     begin.onmousedown = function () {
         if (!timer)
             timer = setInterval(function () {
-                if (Judge == 1)
+                if (Judge)
                     rand_Gen();
                 else
                     move();
             }, speed);
         Key();
-        keys.slowdown();
-        btnEffect(begin);
+        slowdown();
+        btnAnimation(begin);
     }
     stopContinue.onmousedown = function () {
         if (run)
             run = false;
         else
             run = true;
-            btnEffect(stopContinue);
+        btnAnimation(stopContinue);
     }
     musicBox.onmousedown = function () {
         if (music.paused) {
@@ -661,6 +678,6 @@ window.onload = function () {
             music.pause();
             musicBox.style.backgroundImage = "url(./pauseMusic.png)";
         }
-    }
+    }//背景音乐播放与暂停
 }
 

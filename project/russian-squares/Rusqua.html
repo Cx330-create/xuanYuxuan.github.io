@@ -9,18 +9,23 @@
     <link rel="stylesheet" href="./Rusqua.css">
 </head>
 
-<body>
+<body style='font-family:"Times New Roman",Georgia,Serif'>
+    <!-- <img src="./preview-1.png" class="flash">
+    <img src="./preview-2.png" class="flash">
+    <img src="./preview-3.png" class="flash">
+    <img src="./preview-4.png" class="flash"> -->
         <div id="box" class="box">
-            <div id="musicBox" class="musicBox">
+            <div id="music-box" class="music-box">
                 <audio autoplay="autopaly" loop="loop">
                     <source src="http://music.163.com/song/media/outer/url?id=448226072.mp3" type="audio/mp3" />
                 </audio>
             </div>
-            <table id="gameBorder"></table>
-            <div class="tip_box">
+            <table id="game-border"></table>
+            <div class="tip-box">
                 <p style="color: rgb(255, 255, 255);">下一个方块的形状是：</p>
                 <table id="tip" class="tip"></table>
             </div>
+            <p id="score" style="position: absolute;top: 35%; right: 18%;color: white;"></p>
             <button id="begin" class="begin btn-right-bottom-shadow">开始游戏</button>
             <button id="stop-continue" class="stop-continue btn-right-bottom-shadow">暂停继续</button>
         </div>

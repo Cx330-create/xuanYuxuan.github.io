@@ -14,6 +14,15 @@ body {
     z-index: -1;
 }
 
+.flash{
+    position: absolute;
+    display: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    z-index: 10;
+}
+
 .box{
     position: relative;
     margin: 40px auto;
@@ -21,7 +30,7 @@ body {
     width: 670px;
 }
 
-.musicBox{
+.music-box{
     position: absolute;
     cursor: pointer;
     border-radius: 50%;
@@ -30,7 +39,7 @@ body {
     right: 135px;
     top: 380px;
 }
-.musicBox:hover{
+.music-box:hover{
     animation: rotating 0.5s infinite linear;
 }
 
@@ -49,12 +58,14 @@ body {
     } 
 }
 
-.musicBox audio{
+.music-box audio{
     display: none;
 }
 
-.tip_box{
+.tip-box{
     position: absolute;
+    width: 160px;
+    height: 120px;
     right: 50px;
     top:100px;
 }
@@ -125,12 +136,12 @@ td {
 }
 
 .runColor {
-    background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
+    background-image: linear-gradient(to top, #ff0844 0%, #ffb199 100%);
 }
 .stopColor{
-    background-image: linear-gradient(to right, #243949 0%, #517fa4 100%);
+    background-image: linear-gradient(-225deg, #FF057C 0%, #8D0B93 50%, #321575 100%);
 }
 
 .border {
-    background-color: pink;
+    background-image: linear-gradient(-225deg, #69EACB 0%, #EACCF8 50%, #6654F1 100%);
 }
