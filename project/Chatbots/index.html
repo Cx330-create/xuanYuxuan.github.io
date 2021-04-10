@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>people-robot-chatting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body{
+            background-image: url("http://h2.ioliu.cn/bing/Olympics125_ZH-CN3521721828_1920x1080.jpg?imageslim");
+        }
+
+        .chat-container {
+            box-sizing: border-box;
+            margin: 10px auto;
+            width: 600px;
+            height: 520px;
+            border-radius: 5px;
+            background-color: #ffffff85;
+        }
+
+        .b-chat-window {
+            overflow-y: scroll;
+            border-bottom: 2px solid #82c9ec;
+            height: 420px;
+        }
+
+        .s-chat-window {
+            margin: 10px;
+        }
+
+        .robot {
+            margin-bottom: 10px;
+        }
+
+        .robot strong {
+            float: left;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            text-align: center;
+            line-height: 50px;
+            vertical-align: middle;
+            background-color: #ff7db3;
+            color: #ffffff;
+        }
+
+        .robot p {
+            position: relative;
+            float: left;
+            box-sizing: border-box;
+            padding: 10px;
+            border-radius: 5px;
+            margin-left: 10px;
+            max-width: 490px;
+            font-size: 22px;
+            vertical-align: middle;
+            background-color: #82c9ec;
+            color: #ffffff;
+            word-wrap: break-word;
+        }
+
+        .robot p::after {
+            position: absolute;
+            top: 18px;
+            left: -16px;
+            content: '';
+            border: 8px solid transparent;
+            border-right-color: #82c9ec;
+        }
+
+        .people {
+            display: none;
+            margin-bottom: 10px;
+        }
+
+        .people strong {
+            float: right;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            text-align: center;
+            line-height: 50px;
+            vertical-align: middle;
+            background-color: #97c02b;
+            color: #ffffff;
+        }
+
+        .people p {
+            position: relative;
+            float: right;
+            box-sizing: border-box;
+            border-radius: 5px;
+            margin-right: 10px;
+            max-width: 490px;
+            padding: 10px;
+            font-size: 22px;
+            vertical-align: middle;
+            background-color: #cccccc;
+            color: #000;
+            word-wrap: break-word;
+        }
+
+        .people p::after {
+            position: absolute;
+            top: 18px;
+            right: -16px;
+            content: '';
+            border: 8px solid transparent;
+            border-left-color: #cccccc;
+        }
+
+        /* 使用before和after双伪元素清除浮动 */
+        .clearfix:after,
+        .clearfix:before {
+            content: "";
+            display: table;
+        }
+
+        .clearfix:after {
+            clear: both;
+        }
+
+        .clearfix {
+            *zoom: 1;
+        }
+
+        .send-container {
+            height: 100px;
+            line-height: 100px;
+            text-align: center;
+        }
+
+        .message {
+            border: 2px solid #cccccc;
+            border-radius: 5px;
+            padding-left: 10px;
+            height: 40px;
+            width: 300px;
+            font-size: 24px;
+            outline: none;
+            vertical-align: middle;
+        }
+
+        .send-btn {
+            border: none;
+            border-radius: 5px;
+            margin-left: 20px;
+            height: 40px;
+            width: 80px;
+            font-size: 20px;
+            text-align: center;
+            background-color: #97c02b;
+            color: #ffffff;
+            vertical-align: middle;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-container">
+        <div class="b-chat-window">
+            <div class="s-chat-window">
+                <div class="robot clearfix">
+                    <strong>机</strong>
+                    <p>欢迎使用图灵机器人！(我很笨请不要骂我)</p>
+                </div>
+                <div class="people clearfix">
+                    <strong>人</strong>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+        <div class="send-container">
+            <input type="text" class="message">
+            <input type="button" value="发送" class="send-btn">
+        </div>
+    </div>
+</body>
+<script>
+    let bChatCindow = document.querySelector(".b-chat-window");
+    let sChatWindow = document.querySelector(".s-chat-window");
+    let people = document.querySelectorAll(".people");
+    let peopleMessage = document.querySelectorAll(".people p");
+    let robot = document.querySelectorAll(".robot");
+    let robotMessage = document.querySelectorAll(".robot p");
+    let isCanSend = true;// 等待图灵机器人回复信息后才可以发送下一条信息
+    document.querySelector(".send-btn").addEventListener("click", sendMessage)
+    document.onkeydown = function (ev) {
+        let key = ev.keyCode;
+        if (key === 13) {
+            sendMessage();
+        }
+    }
+    function sendMessage() {
+        if (isCanSend) {
+            let message = document.querySelector(".message").value;
+            isCanSend = false;
+            if (message !== "") {
+                let peopleNode = people[0].cloneNode(true);
+                peopleNode.style.display = "block";
+                // lastElementChild可以忽略文本节点 只选中元素节点
+                peopleNode.lastElementChild.innerText = message;
+                sChatWindow.appendChild(peopleNode);
+
+                if (window.XMLHttpRequest) {
+                    var xhr = new XMLHttpRequest();
+                }
+                else {
+                    var xhr = new ActiveXObject();
+                }
+
+                xhr.open('post', 'http://www.tuling123.com/openapi/api');
+
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                xhr.send('key=493e61da060641c58b934d7dffbb7006&info=' + message);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status >= 200 && xhr.status < 300) {
+                            let robotNode = robot[0].cloneNode(true);
+                            robotNode.style.display = "block";
+                            // lastElementChild可以忽略文本节点 只选中元素节点
+                            robotNode.lastElementChild.innerText = JSON.parse(xhr.response).text;
+                            sChatWindow.appendChild(robotNode);
+                        }
+                        else {
+                            alert("响应失败！！！");
+                        }
+                    }
+                    document.querySelector(".message").value = "";
+                    isCanSend = true;
+                    bChatCindow.scrollTop = bChatCindow.scrollHeight; 
+                }
+            } else {
+                alert("发送内容不能为空！");
+            }
+        }
+    }
+</script>
+
+</html>
