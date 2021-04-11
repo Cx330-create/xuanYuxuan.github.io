@@ -12,7 +12,9 @@
             padding: 0;
         }
 
-        body{
+        body {
+            height: 100%;
+            width: 100%;
             background-image: url("http://h2.ioliu.cn/bing/Olympics125_ZH-CN3521721828_1920x1080.jpg?imageslim");
         }
 
@@ -187,6 +189,11 @@
     </div>
 </body>
 <script>
+
+    if (/mobile/i.test(navigator.userAgent)) {
+        document.body.style.background = "url(" + "./background.jpg" + ")";
+    }
+
     let bChatCindow = document.querySelector(".b-chat-window");
     let sChatWindow = document.querySelector(".s-chat-window");
     let people = document.querySelectorAll(".people");
@@ -240,7 +247,7 @@
                     }
                     document.querySelector(".message").value = "";
                     isCanSend = true;
-                    bChatCindow.scrollTop = bChatCindow.scrollHeight; 
+                    bChatCindow.scrollTop = bChatCindow.scrollHeight;
                 }
             } else {
                 alert("发送内容不能为空！");
